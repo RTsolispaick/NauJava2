@@ -20,9 +20,9 @@ import java.net.http.HttpResponse;
  * (запрос выполняется по адресу “https://httpbin.org/ip”).
  */
 public class Task4 {
-    private static final URI uri = URI.create("https://httpbin.org/ip");
+    private final URI uri = URI.create("https://httpbin.org/ip");
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     /**
      * Внутренний класс DTO представляет структуру данных для хранения
@@ -35,45 +35,29 @@ public class Task4 {
     ) {}
 
     /**
-     * Выполняет HTTP GET-запрос по указанному URI и возвращает
-     * ответ в виде массива байтов.
-     *
-     * @param uri URI, на который будет выполнен запрос
-     * @return массив байтов, содержащий тело ответа
+     * Решение задачи
      */
-    private static byte[] makeRequest(URI uri) {
-        try (HttpClient client = HttpClient.newHttpClient()) {
-            HttpRequest request = HttpRequest.newBuilder()
+    public void solve()
+    {
+        try {
+            // Выполняем запрос
+            HttpClient client = HttpClient
+                    .newHttpClient();
+            HttpRequest request = HttpRequest
+                    .newBuilder()
                     .uri(uri)
                     .build();
-            HttpResponse<byte[]> response = client.send(request,
-                    HttpResponse.BodyHandlers.ofByteArray());
-            return response.body();
-        } catch (Exception e) {
-            throw new RuntimeException("Не удалось выполнить запрос", e);
+            HttpResponse<String> response = client.send(
+                    request, HttpResponse.BodyHandlers.ofString()
+            );
+
+            // Преобразуем байтове представление JSON файла в объект DTO
+            DTO dto = mapper.readValue(response.body(), DTO.class);
+
+            // Вывод
+            System.out.println("IP адрес из запроса: " + dto.IP);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException("Ошибка выполнения запроса", e);
         }
-    }
-
-    /**
-     * Преобразует массив байтов JSON в объект DTO.
-     *
-     * @param jsonInByte массив байтов, содержащий JSON
-     * @return объект DTO, заполненный данными из JSON
-     */
-    private static DTO getDTO(byte[] jsonInByte) {
-        try {
-            return mapper.readValue(jsonInByte, DTO.class);
-        } catch (IOException e) {
-            throw new RuntimeException("Не удалось создать DTO", e);
-        }
-    }
-
-    public static void main(String[] args)
-    {
-        byte[] bodyOfRequest = makeRequest(uri);
-
-        DTO dto = getDTO(bodyOfRequest);
-
-        System.out.println(dto.IP);
     }
 }

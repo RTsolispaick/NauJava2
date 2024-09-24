@@ -81,7 +81,7 @@ public class Task3 {
         }
     }
 
-    private static ArrayList<Employee> getEmployees() {
+    private ArrayList<Employee> getEmployees() {
         ArrayList<Employee> employees = new ArrayList<>();
         employees.add(new Employee("Алёна Медведева",
                 20,
@@ -106,9 +106,16 @@ public class Task3 {
         return employees;
     }
 
-    public static void main(String[] args) {
+    /**
+     * Решение задачи
+     */
+    public void solve() {
         ArrayList<Employee> employees = getEmployees();
 
+        System.out.println("Исходный список:");
+        employees.forEach(System.out::println);
+
+        System.out.println("Список людей старше 30 лет:");
         employees.stream()
                 .filter(s -> s.getAge() > 30)
                 .forEach(System.out::println);

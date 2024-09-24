@@ -3,6 +3,7 @@ package homework;
 import utils.RandomGenerator;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  * Заполните массив (тип элементов “int”) случайными числами и выполните задание в соответствии со своим вариантом.
@@ -10,32 +11,15 @@ import java.util.Arrays;
  */
 public class Task1
 {
-    private static int parserArgs(String[] args) {
-        if (args.length != 1) {
-            throw new IllegalArgumentException("""
-                    Программа принимает один обязательный аргумент! Ввдите количество чисел в массиве.
-                    """);
-        }
-
-        try {
-            return Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("""
-                    Нужно ввести одно любое целое положительное число!
-                    """);
-        }
-    }
-
     /**
      * Запуск программы
-     * @param args ожидается одно целое число, которое будет являться размером массива
      */
-    public static void main(String[] args)
-    {
-        int size = parserArgs(args);
+    public void solve(Scanner scanner) {
+        int size = scanner.nextInt();
 
         int[] nums = RandomGenerator.getRandomIntArray(size);
 
+        System.out.println("Исходный спискок:");
         System.out.println(Arrays.toString(nums));
 
         int max = Integer.MIN_VALUE;

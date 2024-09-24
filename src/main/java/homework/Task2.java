@@ -3,6 +3,7 @@ package homework;
 import utils.RandomGenerator;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Заполните список (тип “ArrayList<Double>”) случайным числами и отсортируйте его.
@@ -18,7 +19,7 @@ public class Task2 {
      * @param m   середина, где первый подмассив заканчивается и второй начинается
      * @param r   конец второго подмассива
      */
-    static private void merge(ArrayList<Double> arr, int l, int m, int r) {
+    private void merge(ArrayList<Double> arr, int l, int m, int r) {
         int n1 = m - l + 1;
         int n2 = r - m;
 
@@ -64,7 +65,7 @@ public class Task2 {
      * @param l   начало подсписка для сортировки
      * @param r   конец подсписка для сортировки
      */
-    static private void sort(ArrayList<Double> arr, int l, int r) {
+    private void sort(ArrayList<Double> arr, int l, int r) {
         if (l < r) {
             int m = l + (r - l) / 2;
 
@@ -75,28 +76,11 @@ public class Task2 {
         }
     }
 
-    private static int parserArgs(String[] args) {
-        if (args.length != 1) {
-            throw new IllegalArgumentException("""
-                    Программа принимает один обязательный аргумент! Ввдите количество чисел в массиве.
-                    """);
-        }
-
-        try {
-            return Integer.parseInt(args[0]);
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("""
-                    Нужно ввести одно любое целое положительное число!
-                    """);
-        }
-    }
-
     /**
      * Запуск программы
-     * @param args ожидается одно целое число, которое будет являться размером массива
      */
-    public static void main(String[] args) {
-        int size = parserArgs(args);
+    public void solve(Scanner scanner) {
+        int size = scanner.nextInt();
 
         ArrayList<Double> arr = RandomGenerator.getRandomDoubleList(size);
 
@@ -105,7 +89,7 @@ public class Task2 {
 
         sort(arr, 0, arr.size() - 1);
 
-        System.out.println("Отсортированный список:");
+        System.out.println("Отсортированный список при помощи Merge sort:");
         System.out.println(arr);
     }
 }

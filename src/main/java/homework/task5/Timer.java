@@ -65,7 +65,7 @@ public class Timer implements Task {
     /**
      * Пример работы таймера
      */
-    public static void main(String[] args) {
+    public static void example() {
         Timer timer = new Timer(10); // Таймер на 10 секунд
         timer.start();
 
