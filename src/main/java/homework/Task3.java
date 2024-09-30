@@ -25,7 +25,7 @@ public class Task3 {
     /**
      * Класс сотрудника
      */
-    private static class Employee {
+    private class Employee {
         private String fullName;
         private Integer age;
         private String department;

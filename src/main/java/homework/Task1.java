@@ -24,7 +24,7 @@ public class Task1
 
         int max = Integer.MIN_VALUE;
         for (int num : nums) {
-            max = Math.max(max, num);
+            max = Math.max(max, Math.abs(num));
         }
 
         System.out.println(max);

@@ -1,5 +1,7 @@
 package homework.task5;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Реализуйте интерфейс “Task” для выполнения функции обратного
  * отсчёта таймера. Таймер должен начинаться с заданного значения и
@@ -9,12 +11,11 @@ package homework.task5;
  * использовать метод “java.lang.Thread#sleep(long)”.
  */
 public class Timer implements Task {
-    private volatile int startTime;
-    private volatile boolean running;
+    private final AtomicInteger startTime;
+    public Thread thread;
 
     public Timer(int startTime) {
-        this.startTime = startTime;
-        this.running = false;
+        this.startTime = new AtomicInteger(startTime);
     }
 
     /**
@@ -22,33 +23,33 @@ public class Timer implements Task {
      */
     @Override
     public void start() {
-        if (running) {
-            System.out.println("Таймер уже запущен!");
+        if (thread != null) {
+            System.out.println("Повторная попытка запуска таймера!");
             return;
         }
 
-        running = true;
+        thread = new Thread(() -> {
+            while (startTime.get() > 0) {
+                if (Thread.currentThread().isInterrupted())
+                    return;
 
-        new Thread(() -> {
-            int timeLeft = startTime;
-            while (timeLeft >= 0 && running) {
-                System.out.println("Осталось времени: " + timeLeft + " секунд");
-                timeLeft--;
+                System.out.println("Осталось времени: " + startTime.get() + " секунд");
+                startTime.getAndDecrement();
 
                 try {
-                    Thread.sleep(1000); // Пауза на 1 секунду
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt(); // Восстанавливаем статус прерывания
-                    break;
+                    return;
                 }
             }
-            if (!running) {
-                this.startTime = timeLeft;
-                System.out.println("Таймер остановлен.");
-            } else {
+
+            if (!Thread.currentThread().isInterrupted()) {
                 System.out.println("Время вышло!");
             }
-        }).start();
+        });
+        thread.start();
+
+        System.out.println("Таймер запущен!");
     }
 
     /**
@@ -56,10 +57,13 @@ public class Timer implements Task {
      */
     @Override
     public void stop() {
-        if (running)
-            running = false;
-        else
-            System.out.println("Таймер уже остановлен!");
+        if (thread != null) {
+            thread.interrupt();
+            thread = null;
+            System.out.println("Таймер остановлен!");
+        } else {
+            System.out.println("Повторная попытка остановить таймер!");
+        }
     }
 
     /**
@@ -68,10 +72,11 @@ public class Timer implements Task {
     public static void example() {
         Timer timer = new Timer(10); // Таймер на 10 секунд
         timer.start();
+        timer.start();
 
         // Пример повторного заупуска таймера через 1 секунду во время работы
         try {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
@@ -80,11 +85,12 @@ public class Timer implements Task {
 
         // Пример остановки таймера через 4 секунд
         try {
-            Thread.sleep(4000);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
 
+        timer.stop();
         timer.stop();
 
         // Пример повторной остановки таймера через 1 секунду, когда он остановлен
@@ -104,14 +110,9 @@ public class Timer implements Task {
         }
 
         timer.start();
-
-        // Пример остановки таймера через 4 секунды
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
         timer.stop();
+        timer.start();
+        timer.stop();
+        timer.start();
     }
 }
